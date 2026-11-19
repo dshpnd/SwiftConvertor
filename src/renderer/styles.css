@@ -1,0 +1,517 @@
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('./fonts/ibm-plex-mono-latin-400-normal.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --circle-size: 112px;
+}
+
+body[data-state='idle'] .drop-zone,
+body[data-state='armed'] .drop-zone {
+  display: flex !important;
+}
+
+body[data-state='idle'] .wheel-container,
+body[data-state='armed'] .wheel-container,
+body[data-state='wheelOpen'] .drop-zone,
+body[data-state='converting'] .drop-zone,
+body[data-state='done'] .drop-zone {
+  display: none !important;
+}
+
+body[data-state='wheelOpen'] .wheel-container,
+body[data-state='converting'] .wheel-container,
+body[data-state='done'] .wheel-container {
+  display: flex !important;
+}
+
+@font-face {
+  font-family: 'IBM Plex Mono';
+  src: url('./fonts/ibm-plex-mono-latin-500-normal.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+html,
+body {
+  margin: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: transparent;
+  font-family: 'IBM Plex Mono', monospace;
+  user-select: none;
+}
+
+.stage {
+  position: relative;
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.drop-zone {
+  box-sizing: border-box;
+  position: relative;
+  width: var(--circle-size);
+  height: var(--circle-size);
+  border-radius: 50%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: linear-gradient(
+    to right,
+    rgba(117, 127, 154, 0.75) 0%,
+    rgba(215, 221, 232, 0.65) 51%,
+    rgba(117, 127, 154, 0.75) 100%
+  );
+  background-size: 200% auto;
+  background-position: left center;
+  transition: background-position 0.7s ease, transform 0.7s ease, color 0.7s ease;
+  color: white;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35),
+    inset 0 2px 6px rgba(255, 255, 255, 0.45),
+    inset 0 -8px 16px rgba(0, 0, 0, 0.12);
+  border: none;
+  outline: none;
+  flex: 0 0 auto;
+  min-width: var(--circle-size);
+  min-height: var(--circle-size);
+  aspect-ratio: 1 / 1;
+  opacity: 1;
+  transition: opacity 150ms linear, background-position 0.7s ease,
+    transform 0.7s ease, color 0.7s ease;
+}
+
+.drop-zone.fade-out {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 150ms linear;
+}
+
+.drop-zone.fade-in {
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 150ms linear;
+}
+
+.drop-zone::before {
+  position: absolute;
+  inset: -20%;
+  content: '';
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.18), transparent 48%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.drop-zone:hover,
+.drop-zone.hover {
+  background-position: right center;
+  transform: scale(1.03);
+  color: #fff;
+}
+
+.drag-handle,
+.quit-button {
+  opacity: 0;
+  transition: opacity 0.5s ease, background 0.5s ease, color 0.5s ease;
+}
+
+body:hover .drag-handle,
+body:hover .quit-button,
+.drop-zone.hover .drag-handle,
+.drop-zone.hover .quit-button {
+  opacity: 1;
+}
+
+.drag-handle {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 28px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.45);
+  -webkit-app-region: drag;
+  z-index: 2;
+}
+
+.quit-button {
+  position: absolute;
+  top: 14px;
+  right: 16px;
+  width: 16px;
+  height: 16px;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  color: rgba(255, 255, 255, 0.8);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 16px;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+  z-index: 2;
+}
+
+.quit-button:hover {
+  background: rgba(255, 255, 255, 0.4);
+  color: #ffffff;
+}
+
+.drop-content {
+  position: relative;
+  z-index: 1;
+  max-width: 86px;
+  padding: 10px 6px 0;
+  text-align: center;
+  pointer-events: none;
+}
+
+.download-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+  margin: 0 auto 5px;
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.9);
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.5;
+}
+
+.file-name,
+.file-category {
+  color: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.file-name {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.file-category {
+  margin: 4px 0 0;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.drop-zone.has-file .download-icon {
+  display: none;
+}
+
+.drop-zone.detecting .download-icon {
+  display: none;
+}
+
+.drop-zone.detecting .file-name {
+  font-size: 11px;
+  letter-spacing: 0;
+}
+
+.drop-zone.message {
+  display: flex;
+}
+
+.wheel-container {
+  display: none;
+  position: absolute;
+  inset: 0;
+  width: 440px;
+  height: 440px;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  transform: scale(0.96);
+  transform-origin: 220px 220px;
+}
+
+.wheel-container[aria-hidden='false'] {
+  display: flex;
+  opacity: 1;
+  pointer-events: auto;
+  transform: scale(1);
+}
+
+.wheel-container.fade-out {
+  opacity: 0 !important;
+  pointer-events: none;
+  transform: scale(1);
+  transition: opacity 150ms linear;
+}
+
+.wheel-svg {
+  shape-rendering: geometricPrecision;
+  text-rendering: geometricPrecision;
+  transition: opacity 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wheel-svg.finish-crossfade-out {
+  opacity: 0;
+}
+
+.wheel-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  font-family: 'IBM Plex Mono', monospace;
+}
+
+.wheel-wedge {
+  transform-box: view-box;
+  transform-origin: 220px 220px;
+  transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1),
+    opacity 180ms cubic-bezier(0.22, 1, 0.36, 1);
+  cursor: pointer;
+  will-change: transform;
+}
+
+.wheel-wedge-gradient {
+  fill: url(#wheel-gradient);
+  fill-opacity: 0.75;
+  transition: fill-opacity 120ms ease-out;
+}
+
+.wheel-wedge-outline {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 1;
+}
+
+.wheel-wedge.active,
+.wheel-wedge.selected {
+  transform: scale(1.06);
+}
+
+.wheel-wedge.active .wheel-wedge-gradient,
+.wheel-wedge.selected .wheel-wedge-gradient {
+  fill-opacity: 0.86;
+}
+
+.wheel-wedge.active .wheel-wedge-outline,
+.wheel-wedge.selected .wheel-wedge-outline {
+  stroke: rgba(255, 255, 255, 0.8);
+}
+
+.wheel-wedge.active .wheel-wedge-outline {
+  stroke-width: 2;
+}
+
+.wheel-wedge.active + .wheel-label,
+.wheel-wedge.selected + .wheel-label {
+  fill: #ffffff;
+  font-weight: 600;
+}
+
+.wheel-wedge.finish {
+  opacity: 0;
+  transition: opacity 180ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wheel-label,
+.wheel-file-name,
+.wheel-category {
+  fill: rgba(255, 255, 255, 0.9);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.wheel-label {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  transition: fill 120ms ease-out, font-weight 120ms ease-out;
+  paint-order: stroke fill;
+}
+
+.wheel-center {
+  fill: rgba(117, 127, 154, 0.75);
+  stroke: rgba(255, 255, 255, 0.35);
+  stroke-width: 1;
+}
+
+.progress-ring-track,
+.progress-ring-progress {
+  display: none;
+  fill: none;
+  pointer-events: none;
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: rotate(-90deg);
+}
+
+.progress-ring-track {
+  stroke: rgba(255, 255, 255, 0.15);
+  stroke-width: 6;
+}
+
+.progress-ring-progress {
+  stroke: url(#wheel-progress-gradient);
+  stroke-width: 6;
+  stroke-linecap: round;
+  stroke-dasharray: var(--progress-circumference);
+  stroke-dashoffset: var(--progress-circumference);
+  transition: stroke-dashoffset 0.3s ease-out;
+}
+
+body[data-state='converting'] .progress-ring-track,
+body[data-state='converting'] .progress-ring-progress,
+body[data-state='done'] .progress-ring-track,
+body[data-state='done'] .progress-ring-progress {
+  display: block;
+}
+
+.progress-ring-progress.progress-error {
+  stroke: #E5484D;
+}
+
+.progress-count,
+.progress-caption {
+  display: none;
+  fill: rgba(255, 255, 255, 0.95);
+  text-anchor: middle;
+  dominant-baseline: middle;
+  pointer-events: none;
+}
+
+.progress-count {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.progress-caption {
+  fill: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+}
+
+body[data-state='converting'] .progress-count,
+body[data-state='converting'] .progress-caption {
+  display: block;
+}
+
+.progress-indeterminate .progress-ring-progress {
+  animation: progress-ring-rotate 1.2s linear infinite;
+}
+
+.wheel-file-name {
+  font-size: 11px;
+  font-weight: 500;
+  text-overflow: ellipsis;
+}
+
+.wheel-category {
+  fill: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+  text-transform: uppercase;
+}
+
+.wheel-quality {
+  fill: rgba(255, 255, 255, 0.7);
+  font-size: 10px;
+}
+
+.wheel-center.finish {
+  r: 102;
+  transition: r 0.3s ease;
+}
+
+.wheel-check {
+  fill: none;
+  stroke: rgba(255, 255, 255, 0.95);
+  stroke-width: 5;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 100;
+  stroke-dashoffset: 100;
+  animation: draw-check 0.5s ease forwards;
+}
+
+.wheel-check.finish-drawn {
+  stroke-dashoffset: 0;
+  animation: none;
+  transition: stroke-dashoffset 400ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.show-folder-button {
+  position: absolute;
+  left: 50%;
+  bottom: 86px;
+  transform: translateX(-50%);
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 999px;
+  background: rgba(117, 127, 154, 0.7);
+  color: rgba(255, 255, 255, 0.9);
+  font: 10px 'IBM Plex Mono', monospace;
+  cursor: pointer;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wheel-container,
+  .wheel-container[aria-hidden='false'],
+  .wheel-container.fade-out {
+    transform: none;
+    transition: opacity 150ms linear;
+  }
+
+  .drop-zone.fade-in,
+  .drop-zone.fade-out {
+    transition: opacity 150ms linear;
+  }
+
+  .wheel-wedge {
+    transition: none;
+    transform: none;
+  }
+
+  .wheel-wedge.active .wheel-wedge-outline,
+  .wheel-wedge.selected .wheel-wedge-outline {
+    stroke: rgba(255, 255, 255, 0.35);
+  }
+
+  .wheel-check {
+    animation: none;
+  }
+
+  .progress-ring-progress {
+    animation: none;
+    transition: none;
+  }
+}
+
+@keyframes draw-check {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes progress-ring-rotate {
+  to {
+    transform: rotate(270deg);
+  }
+}

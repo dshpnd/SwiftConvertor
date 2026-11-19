@@ -1,0 +1,83 @@
+{
+  "name": "swiftconvertor",
+  "version": "1.0.0",
+  "main": "src/main/main.js",
+  "description": "Fast offline file conversion for Windows",
+  "author": "SwiftConvertor",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron .",
+    "test": "electron scripts/test-convert.js",
+    "test:pdf": "electron scripts/test-pdf.js",
+    "pack": "electron-builder --dir",
+    "selftest": "electron . --self-test",
+    "icon": "node scripts/make-icon.js",
+    "dist": "npm run icon && electron-builder --win nsis"
+  },
+  "devDependencies": {
+    "electron": "^45.1.0",
+    "electron-builder": "^26.18.0",
+    "png-to-ico": "^3.0.2"
+  },
+  "dependencies": {
+    "@fontsource/ibm-plex-mono": "^5.3.0",
+    "heic-convert": "^2.1.0",
+    "pdf-lib": "^1.17.1"
+  },
+  "build": {
+    "appId": "com.swiftconvertor.app",
+    "productName": "SwiftConvertor",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "src/**/*",
+      "package.json",
+      "!scripts/**/*",
+      "!backup-src/**/*",
+      "!bin/**/*",
+      "!dist/**/*",
+      "!*.md"
+    ],
+    "asar": true,
+    "asarUnpack": [
+      "src/converters/heicWorker.js",
+      "**/node_modules/heic-convert/**"
+    ],
+    "extraResources": [
+      {
+        "from": "./bin",
+        "to": "bin",
+        "filter": [
+          "**/*",
+          "!ffprobe.exe"
+        ]
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": true,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": false,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "SwiftConvertor",
+      "runAfterFinish": true,
+      "deleteAppDataOnUninstall": true,
+      "installerIcon": "build/icon.ico",
+      "uninstallerIcon": "build/icon.ico",
+      "installerHeaderIcon": "build/icon.ico"
+    },
+    "artifactName": "SwiftConvertor-Setup-${version}.exe",
+    "publish": null,
+    "copyright": "Copyright (c) 2026",
+    "electronLanguages": [
+      "en-US"
+    ],
+    "compression": "maximum"
+  }
+}
