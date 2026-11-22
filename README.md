@@ -16,7 +16,6 @@ SwiftConvertor is an offline file converter for Windows. Drag a file onto a smal
 
 ### Conversions shown in the demo
 
-<!-- Replace each placeholder with a screenshot or short GIF from your recording. Delete any you do not use. -->
 
 | PNG to JPG | DOCX to PDF |
 |---|---|
