@@ -10,16 +10,9 @@ SwiftConvertor is an offline file converter for Windows. Drag a file onto a smal
 
 ## Demo
 
-<!--
-ADD YOUR SCREEN RECORDING HERE. Pick one:
-
-Option 1 (GIF, plays inline): save it as docs/demo.gif and keep the line below.
-Option 2 (video): on GitHub, edit this README, drag your .mp4 into the editor, and GitHub inserts a playable link. Paste it here.
-Option 3 (YouTube or Drive): replace YOUR_VIDEO_LINK below.
--->
-
-![SwiftConvertor demo](docs/demo.gif)
-
+<p align="center">
+  <img src="Demo.gif" alt="Demo" width="70%" />
+</p>
 
 ### Conversions shown in the demo
 
