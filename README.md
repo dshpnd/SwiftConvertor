@@ -20,7 +20,6 @@ Option 3 (YouTube or Drive): replace YOUR_VIDEO_LINK below.
 
 ![SwiftConvertor demo](docs/demo.gif)
 
-[Watch the full demo video](YOUR_VIDEO_LINK)
 
 ### Conversions shown in the demo
 
