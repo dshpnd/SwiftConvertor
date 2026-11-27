@@ -1,4 +1,4 @@
-# SwiftConvertor
+# SwiftConvertor: An offline file converter
 
 **Drag. Drop. Done. Your files never leave your PC.**
 
